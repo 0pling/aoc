@@ -39,17 +39,17 @@ pub fn solve_day02() {
                 let y = codes[i + 2];
                 let t = codes[i + 3];
                 codes[t] = codes[x] + codes[y];
-                i = i + 4;
+                i += 4;
             }
             2 => {
                 let x = codes[i + 1];
                 let y = codes[i + 2];
                 let t = codes[i + 3];
                 codes[t] = codes[x] * codes[y];
-                i = i + 4;
+                i += 4;
             }
             _ => {
-                i = i + 1;
+                i += 1;
             }
         };
     }
