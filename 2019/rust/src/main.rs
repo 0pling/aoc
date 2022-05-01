@@ -5,6 +5,7 @@ fn main() {
     let day = &args[1][..];
     match day {
         "day01" => rust::solve_day01(),
+        "day02" => rust::solve_day02(),
         _ => unimplemented!(),
     }
 }
