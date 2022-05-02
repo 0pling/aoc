@@ -1,4 +1,7 @@
-use std::io::{self, BufRead, Read};
+use std::{
+    collections::HashSet,
+    io::{self, BufRead, Read},
+};
 
 fn get_input_lines() -> Vec<String> {
     let stdin = io::stdin();
@@ -55,4 +58,50 @@ pub fn solve_day02() {
     }
 
     println!("{:?}", codes);
+}
+
+fn manhanttan_dist(p1: (i32, i32), p2: (i32, i32)) -> i32 {
+    (p1.0 - p2.0).abs() + (p1.1 - p2.1).abs()
+}
+
+fn day03_trace_path(path: &str, pos: (i32, i32)) -> Vec<(i32, i32)> {
+    let dir = &path[..1];
+    let val = &path[1..].parse::<i32>().unwrap();
+    match dir {
+        "U" => (pos.1..=pos.1 + val).map(|y| (pos.0, y)).collect(),
+        "R" => (pos.0..=pos.0 + val).map(|x| (x, pos.1)).collect(),
+        "D" => (pos.1 - val..=pos.1).map(|y| (pos.0, y)).rev().collect(),
+        "L" => (pos.0 - val..=pos.0).map(|x| (x, pos.1)).rev().collect(),
+        _ => Vec::new(),
+    }
+}
+
+pub fn solve_day03() {
+    let lines = get_input_lines();
+    let path1: Vec<&str> = lines[0].split(',').collect();
+    let path2: Vec<&str> = lines[1].split(',').collect();
+
+    let mut trace1 = HashSet::new();
+    let mut pos = (0, 0);
+    for p in path1.iter() {
+        let curr_path = day03_trace_path(p, pos);
+        trace1.extend(curr_path.iter());
+        pos = *curr_path.last().unwrap();
+    }
+
+    let mut trace2 = HashSet::new();
+    pos = (0, 0);
+    for p in path2.iter() {
+        let curr_path = day03_trace_path(p, pos);
+        trace2.extend(curr_path.iter());
+        pos = *curr_path.last().unwrap();
+    }
+
+    let res = trace1
+        .intersection(&trace2)
+        .filter(|&&p| p != (0, 0))
+        .map(|&p| manhanttan_dist(p, (0, 0)))
+        .min()
+        .unwrap();
+    println!("{}", res);
 }
