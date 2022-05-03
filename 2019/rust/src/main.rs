@@ -7,6 +7,7 @@ fn main() {
         "day01" => rust::solve_day01(),
         "day02" => rust::solve_day02(),
         "day03" => rust::solve_day03(),
+        "day04" => rust::solve_day04(),
         _ => unimplemented!(),
     }
 }

@@ -105,3 +105,30 @@ pub fn solve_day03() {
         .unwrap();
     println!("{}", res);
 }
+
+fn get_day04_inputs() -> Vec<i32> {
+    get_input_string()
+        .split('-')
+        .map(|x| x.trim().parse().unwrap())
+        .collect()
+}
+
+pub fn solve_day04() {
+    let inputs = get_day04_inputs();
+    let (s, e) = (inputs[0], inputs[1]);
+    let count = (s + 1..e)
+        .filter(|&x| {
+            let xs = format!("{:}", x);
+            xs.len() == 6
+                && xs
+                    .char_indices()
+                    .any(|(i, c)| i + 1 < xs.len() && c.to_string() == xs[i + 1..i + 2])
+                && xs.char_indices().all(|(i, c)| {
+                    i + 1 == xs.len()
+                        || c.to_string().parse::<i32>().unwrap()
+                            <= xs[i + 1..i + 2].parse::<i32>().unwrap()
+                })
+        })
+        .count();
+    println!("{:}", count);
+}
