@@ -152,6 +152,7 @@ pub fn solve_day05() {
         let instr = c_str[pmodes.len()..].parse().unwrap();
         match instr {
             99 => {
+                println!("Addr {}: BRK", i);
                 break;
             }
             1 => {
@@ -161,7 +162,7 @@ pub fn solve_day05() {
                         '1' => i + 1,
                         _ => unimplemented!("Unimplemented parameter mode"),
                     })
-                    .or(Some(0))
+                    .or(Some(intcodes[i+1] as usize))
                     .unwrap();
                 let iy = (pmodes.len() > 1)
                     .then(|| match pmodes[1] {
@@ -169,16 +170,10 @@ pub fn solve_day05() {
                         '1' => i + 2,
                         _ => unimplemented!("Unimplemented parameter mode"),
                     })
-                    .or(Some(0))
+                    .or(Some(intcodes[i+2] as usize))
                     .unwrap();
-                let iz = (pmodes.len() > 2)
-                    .then(|| match pmodes[2] {
-                        '0' => intcodes[i + 3] as usize,
-                        '1' => i + 3,
-                        _ => unimplemented!("Unimplemented parameter mode"),
-                    })
-                    .or(Some(0))
-                    .unwrap();
+                let iz = intcodes[i+3] as usize;
+                println!("Addr {}: ADD [{}] [{}] [{}]", i, ix, iy, iz);
                 intcodes[iz] = intcodes[ix] + intcodes[iy];
                 i += 4;
             }
@@ -189,7 +184,7 @@ pub fn solve_day05() {
                         '1' => i + 1,
                         _ => unimplemented!("Unimplemented parameter mode"),
                     })
-                    .or(Some(0))
+                    .or(Some(intcodes[i+1] as usize))
                     .unwrap();
                 let iy = (pmodes.len() > 1)
                     .then(|| match pmodes[1] {
@@ -197,34 +192,31 @@ pub fn solve_day05() {
                         '1' => i + 2,
                         _ => unimplemented!("Unimplemented parameter mode"),
                     })
-                    .or(Some(0))
+                    .or(Some(intcodes[i+2] as usize))
                     .unwrap();
-                let iz = (pmodes.len() > 2)
-                    .then(|| match pmodes[2] {
-                        '0' => intcodes[i + 3] as usize,
-                        '1' => i + 3,
-                        _ => unimplemented!("Unimplemented parameter mode"),
-                    })
-                    .or(Some(0))
-                    .unwrap();
+                let iz = intcodes[i+3] as usize;
+                println!("Addr {}: MUL [{}] [{}] [{}]", i, ix, iy, iz);
                 intcodes[iz] = intcodes[ix] * intcodes[iy];
                 i += 4;
             }
             3 => {
+                let ix = intcodes[i + 1] as usize;
+                println!("Addr {}: INPUT [{}]", i, ix);
                 let mut input = String::new();
                 io::stdin().read_line(&mut input).unwrap();
                 let input = input.trim();
-                let ix = intcodes[i + 1] as usize;
                 intcodes[ix] = input.parse().unwrap();
                 i += 2;
             }
             4 => {
                 let ix = intcodes[i + 1] as usize;
                 let val = intcodes[ix];
+                println!("Addr {}: OUTPUT [{}]", i, ix);
                 println!("{}", val);
                 i += 2;
             }
             _ => {
+                println!("Addr {}: UNKNOWN", i);
                 i += 1;
             }
         };
