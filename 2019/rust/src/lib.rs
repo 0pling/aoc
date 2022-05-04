@@ -1,6 +1,6 @@
 use std::{
     collections::HashSet,
-    io::{self, BufRead, Read},
+    io::{self, BufRead, Read}, fs::File, env,
 };
 
 fn get_input_lines() -> Vec<String> {
@@ -131,4 +131,102 @@ pub fn solve_day04() {
         })
         .count();
     println!("{:}", count);
+}
+
+pub fn solve_day05() {
+    let args: Vec<String> = env::args().collect();
+    let input_file = &args[2];
+    let mut f = File::open(input_file).unwrap();
+    let mut s = String::new();
+    f.read_to_string(&mut s).unwrap();
+    let mut intcodes: Vec<i32> = s.split(',').map(|x| x.trim().parse().unwrap()).collect();
+
+    let mut i = 0;
+    while i < intcodes.len() {
+        let c = intcodes[i];
+        let c_str = format!("{:}", c);
+        let pmodes: Vec<char> = (c_str.len() > 1)
+            .then(|| c_str[..c_str.len() - 2].chars().rev().collect())
+            .or(Some(Vec::new()))
+            .unwrap();
+        let instr = c_str[pmodes.len()..].parse().unwrap();
+        match instr {
+            99 => {
+                break;
+            }
+            1 => {
+                let ix = (pmodes.len() > 0)
+                    .then(|| match pmodes[0] {
+                        '0' => intcodes[i + 1] as usize,
+                        '1' => i + 1,
+                        _ => unimplemented!("Unimplemented parameter mode"),
+                    })
+                    .or(Some(0))
+                    .unwrap();
+                let iy = (pmodes.len() > 1)
+                    .then(|| match pmodes[1] {
+                        '0' => intcodes[i + 2] as usize,
+                        '1' => i + 2,
+                        _ => unimplemented!("Unimplemented parameter mode"),
+                    })
+                    .or(Some(0))
+                    .unwrap();
+                let iz = (pmodes.len() > 2)
+                    .then(|| match pmodes[2] {
+                        '0' => intcodes[i + 3] as usize,
+                        '1' => i + 3,
+                        _ => unimplemented!("Unimplemented parameter mode"),
+                    })
+                    .or(Some(0))
+                    .unwrap();
+                intcodes[iz] = intcodes[ix] + intcodes[iy];
+                i += 4;
+            }
+            2 => {
+                let ix = (pmodes.len() > 0)
+                    .then(|| match pmodes[0] {
+                        '0' => intcodes[i + 1] as usize,
+                        '1' => i + 1,
+                        _ => unimplemented!("Unimplemented parameter mode"),
+                    })
+                    .or(Some(0))
+                    .unwrap();
+                let iy = (pmodes.len() > 1)
+                    .then(|| match pmodes[1] {
+                        '0' => intcodes[i + 2] as usize,
+                        '1' => i + 2,
+                        _ => unimplemented!("Unimplemented parameter mode"),
+                    })
+                    .or(Some(0))
+                    .unwrap();
+                let iz = (pmodes.len() > 2)
+                    .then(|| match pmodes[2] {
+                        '0' => intcodes[i + 3] as usize,
+                        '1' => i + 3,
+                        _ => unimplemented!("Unimplemented parameter mode"),
+                    })
+                    .or(Some(0))
+                    .unwrap();
+                intcodes[iz] = intcodes[ix] * intcodes[iy];
+                i += 4;
+            }
+            3 => {
+                let mut input = String::new();
+                io::stdin().read_line(&mut input).unwrap();
+                let input = input.trim();
+                let ix = intcodes[i + 1] as usize;
+                intcodes[ix] = input.parse().unwrap();
+                i += 2;
+            }
+            4 => {
+                let ix = intcodes[i + 1] as usize;
+                let val = intcodes[ix];
+                println!("{}", val);
+                i += 2;
+            }
+            _ => {
+                i += 1;
+            }
+        };
+    }
 }
