@@ -1,5 +1,5 @@
 use std::{
-    collections::HashSet,
+    collections::{HashSet, HashMap},
     io::{self, BufRead, Read}, fs::File, env,
 };
 
@@ -133,6 +133,7 @@ pub fn solve_day04() {
     println!("{:}", count);
 }
 
+// TODO: Refactor this
 pub fn solve_day05() {
     let args: Vec<String> = env::args().collect();
     let input_file = &args[2];
@@ -221,4 +222,38 @@ pub fn solve_day05() {
             }
         };
     }
+}
+
+pub fn solve_day06() {
+    let orbit_map = get_input_lines();
+    let mut objects: HashMap<&str, usize> = HashMap::new();
+    let mut rels: HashMap<usize, usize> = HashMap::new();
+    for line in &orbit_map {
+        let line: Vec<&str> = line.split(')').collect();
+        let (orbitted, orbitter) = (line[0], line[1]);
+        if !objects.contains_key(orbitted) {
+            let id = objects.len();
+            objects.insert(orbitted, id);
+            rels.insert(id, id);
+        }
+        if !objects.contains_key(orbitter) {
+            let id = objects.len();
+            objects.insert(orbitter, id);
+            rels.insert(id, id);
+        }
+        rels.insert(objects[&orbitter], objects[&orbitted]);
+    }
+    let mut orbit_counts = 0;
+    for (_, id) in objects {
+        let mut count = 0;
+        let mut orbitted = rels[&id];
+        let mut orbitter = id;
+        while orbitted != orbitter {
+            count += 1;
+            orbitter = orbitted;
+            orbitted = rels[&orbitter];
+        }
+        orbit_counts += count;
+    }
+    println!("{}", orbit_counts);
 }
